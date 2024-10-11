@@ -1,0 +1,2 @@
+constantes para acceder a informacion del dispositivo 
+npx expo install expo-constants
