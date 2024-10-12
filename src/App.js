@@ -4,6 +4,11 @@ import { NavigationContainer } from "@react-navigation/native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import MainNavigator from "./navigation/MainNavigator";
 
+// Importaciones para firebase
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { initializeApp } from "firebase/app";
+import { firebaseConfig } from '../firebase-config';
+
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
