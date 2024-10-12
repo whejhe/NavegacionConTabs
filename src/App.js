@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import MainNavigator from "./navigation/MainNavigator";
+// import AuthNavigator from "./navigation/AuthNavigator";
 
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -24,12 +25,13 @@ export default function App() {
   }, []);
 
   if (loading) {
-    return null; // Puedes añadir una pantalla de carga mientras se comprueba el estado
+    return null;
   }
 
   return (
     <NavigationContainer>
-      {isLoggedIn ? <MainNavigator /> : <AuthNavigator />}
+      <MainNavigator/>
+      {/* {isLoggedIn ? <MainNavigator /> : <AuthNavigator />} */}
     </NavigationContainer>
   );
 }

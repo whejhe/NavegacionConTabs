@@ -1,8 +1,16 @@
 // src/navigation/MainNavigator.js
 import React, { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import AppLayout from '../components/AppLayout'; // Asegúrate de importar el layout que creaste
+import AppLayout from '../components/AppLayout';
 import AuthMenu from '../screens/Auth/AuthMenu';
+import LoginScreen from '../screens/Auth/LoginScreen';
+import RegisterScreen from '../screens/Auth/RegisterScreen';
+
+// Importar createStackNavigator
+import { createStackNavigator } from '@react-navigation/stack';
+
+// Crear instancia de Stack
+const Stack = createStackNavigator();
 
 export default function MainNavigator() {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -17,12 +25,16 @@ export default function MainNavigator() {
     }, []);
 
     return (
-        <>
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
             {isLoggedIn ? (
-                <AppLayout />
+                <Stack.Screen name="App" component={AppLayout} />
             ) : (
-                <AuthMenu options={{ headerShown: false }} />
+                <>
+                    <Stack.Screen name="AuthMenu" component={AuthMenu} />
+                    <Stack.Screen name="Login" component={LoginScreen} />
+                    <Stack.Screen name="Register" component={RegisterScreen} />
+                </>
             )}
-        </>
+        </Stack.Navigator>
     );
 }

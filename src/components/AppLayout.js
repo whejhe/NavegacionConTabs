@@ -11,9 +11,10 @@ import TestScreen2 from '../screens/TestScreen2';
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
 
+
 const TabNavigator = () => {
     return (
-        <Tab.Navigator>
+        <Tab.Navigator screenOptions={{ headerShown: false }}>
             <Tab.Screen name="Home" component={HomeScreen} />
             <Tab.Screen name="Setting" component={SettingScreen} />
             <Tab.Screen name="Config" component={ConfigScreen} />
