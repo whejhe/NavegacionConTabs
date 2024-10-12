@@ -3,7 +3,6 @@ import React, { useState, useEffect } from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import MainNavigator from "./navigation/MainNavigator";
-// import AuthNavigator from "./navigation/AuthNavigator";
 
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);

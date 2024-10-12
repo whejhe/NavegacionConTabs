@@ -5,14 +5,16 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import HomeScreen from '../screens/HomeScreen';
 import SettingScreen from '../screens/SettingScreen';
 import ConfigScreen from '../screens/ConfigScreen';
-import CerrarSesion from '../screens/CerrarSesion';
 import TestScreen2 from '../screens/TestScreen2';
+import { useNavigation } from '@react-navigation/native';
+import { Pressable } from 'react-native';
+import { logout } from '../utils/logout';
 
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
 
 
-const TabNavigator = () => {
+const MenuNavigator = () => {
     return (
         <Tab.Navigator screenOptions={{ headerShown: false }}>
             <Tab.Screen name="Home" component={HomeScreen} />
@@ -23,10 +25,18 @@ const TabNavigator = () => {
 };
 
 const AppLayout = () => {
+    const navigation = useNavigation();
     return (
         <Drawer.Navigator>
-            <Drawer.Screen name="Tabs" component={TabNavigator} />
-            <Drawer.Screen name="Cerrar Sesion" component={CerrarSesion} />
+            <Drawer.Screen name="Menu Principal" component={MenuNavigator} />
+            <Drawer.Screen 
+                name="Cerrar Sesion" 
+                component={() => (
+                    <Pressable onPress={() => logout(navigation)}>
+                        <Text style={{ padding: 20 }}>Cerrar Sesion</Text>
+                    </Pressable>
+                )} 
+            />
             <Drawer.Screen name="Test2" component={TestScreen2} />
         </Drawer.Navigator>
     );
