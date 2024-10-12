@@ -1,24 +1,12 @@
-// src/utils/authHelpers.js
-import { Alert } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getAuth, signOut } from 'firebase/auth';
+import app from '../firebase/firebase';
 
-export default function logout(navigation){
-    Alert.alert(
-        "Confirmar Cierre de Sesión",
-        "¿Estás seguro de que deseas cerrar sesión?",
-        [
-            {
-                text: "Cancelar",
-                style: "cancel"
-            },
-            {
-                text: "Aceptar", 
-                onPress: async () => {
-                    await AsyncStorage.removeItem('loggedUser');
-                    navigation.navigate("Login");
-                }
-            }
-        ],
-        { cancelable: false }
-    );
-}
+export const logout = async (navigation) => {
+    try {
+        const auth = getAuth(app);
+        await signOut(auth); 
+        navigation.navigate('Login');
+    } catch (error) {
+        console.error('Error cerrando sesión: ', error);
+    }
+};

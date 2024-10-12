@@ -1,39 +1,108 @@
 // src/screens/Auth/LoginScreen.js
+// import { getAuth } from 'firebase/auth';
+// import React, { useState } from 'react';
+// import { View, Text, TextInput, Button, Alert, StyleSheet, Pressable } from 'react-native';
+
+// import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+// import { initializeApp } from "firebase/app";
+// import { firebaseConfig } from '../firebase-config';
+
+
+// function LoginScreen(){
+//     const [email, setEmail] = useState('');
+//     const [password, setPassword] = useState('');
+
+//     const app = initializeApp(firebaseConfig);
+//     const auth = getAuth(app);
+
+//     const handleCreateAccount = () => {
+//         createUserWithEmailAndPassword(auth, email, password)
+//             .then((userCredential) => {
+//                 const user = userCredential.user;
+//                 console.log('Usuario creado:', user);
+//             })
+//             .catch((error) => {
+//                 const errorCode = error.code;
+//                 const errorMessage = error.message;
+//                 Alert.alert('Error', errorMessage);
+//                 console.log('Error creando usuario:', errorCode, errorMessage);
+//             });
+//     };
+
+//     return (
+//         <View style={styles.container}>
+//             <Text>Email:</Text>
+//             <TextInput style={styles.input} value={username} onChangeText={(text) => setEmail(text)} />
+//             <Text>Password:</Text>
+//             <TextInput style={styles.input} value={password} onChangeText={(text) => setPassword(text)} secureTextEntry={true} />
+//             <Pressable style={styles.button} title="Iniciar Sesión" onPress={handleCreateAccount}>
+//                 <Text style={{ color: "white" }}>Iniciar Sesión</Text>
+//             </Pressable>
+//         </View>
+//     );
+// };
+
+// const styles = StyleSheet.create({
+//     container: {
+//         flex: 1,
+//         justifyContent: "center",
+//         alignItems: "center",
+//     },
+//     title: {
+//         fontSize: 24,
+//         fontWeight: "bold",
+//         marginBottom: 20,
+//     },
+//     input: {
+//         width: "80%",
+//         height: 40,
+//         borderColor: "gray",
+//         borderWidth: 1,
+//         marginBottom: 20,
+//         paddingHorizontal: 10,
+//         borderColor: "gray",
+//     },
+//     button: {
+//         width: "80%",
+//         height: 40,
+//         backgroundColor: "blue",
+//         justifyContent: "center",
+//         alignItems: "center",
+//         borderRadius: 5,
+//     },
+// })
+
+// export default LoginScreen;
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, Alert, StyleSheet, Pressable } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import app from '../../firebase/firebase';
 
-const LoginScreen = ({ navigation }) => {
-    const [username, setUsername] = useState('');
+function LoginScreen({ navigation }) {
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    const login = async () => {
-        try {
-            const users = await AsyncStorage.getItem('users');
-            const parsedUsers = users ? JSON.parse(users) : [];
-            const user = parsedUsers.find(u => u.username === username && u.password === password);
-            if (user) {
-                await AsyncStorage.setItem('loggedUser', username);
-                Alert.alert('Login exitoso');
-                navigation.navigate('Root'); // Cambia aquí a 'Root'
-                console.log('Login exitoso');
-            } else {
-                Alert.alert('Usuario o contraseña incorrectos');
-                console.log('Usuario o contraseña incorrectos');
-            }
-        } catch (error) {
-            Alert.alert('Error al iniciar sesión', error.message);
-            console.log('Error al iniciar sesión', error.message);
-        }
+    const auth = getAuth(app);
+
+    const handleLogin = () => {
+        signInWithEmailAndPassword(auth, email, password)
+            .then(async (userCredential) => {
+                const user = userCredential.user;
+                navigation.replace("App");
+            })
+            .catch((error) => {
+                const errorMessage = error.message;
+                Alert.alert('Error', errorMessage);
+            });
     };
 
     return (
         <View style={styles.container}>
-            <Text>Username:</Text>
-            <TextInput style={styles.input} value={username} onChangeText={setUsername} />
+            <Text>Email:</Text>
+            <TextInput style={styles.input} value={email} onChangeText={(text) => setEmail(text)} />
             <Text>Password:</Text>
-            <TextInput style={styles.input} value={password} onChangeText={setPassword} secureTextEntry={true} />
-            <Pressable style={styles.button} title="Iniciar Sesión" onPress={login}>
+            <TextInput style={styles.input} value={password} onChangeText={(text) => setPassword(text)} secureTextEntry={true} />
+            <Pressable style={styles.button} onPress={handleLogin}>
                 <Text style={{ color: "white" }}>Iniciar Sesión</Text>
             </Pressable>
         </View>
@@ -46,15 +115,9 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
     },
-    title: {
-        fontSize: 24,
-        fontWeight: "bold",
-        marginBottom: 20,
-    },
     input: {
         width: "80%",
         height: 40,
-        borderColor: "gray",
         borderWidth: 1,
         marginBottom: 20,
         paddingHorizontal: 10,
@@ -68,6 +131,6 @@ const styles = StyleSheet.create({
         alignItems: "center",
         borderRadius: 5,
     },
-})
+});
 
 export default LoginScreen;

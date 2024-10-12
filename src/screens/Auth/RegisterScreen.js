@@ -1,64 +1,118 @@
-import React, { useState } from "react";
-import { View, Text, TextInput, Alert, StyleSheet, Pressable } from "react-native";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+// src/screens/Auth/RegisterScreen.js
+// import React, { useState } from "react";
+// import { View, Text, TextInput, Alert, StyleSheet, Pressable } from "react-native";
+
+// import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+// import { initializeApp } from "firebase/app";
+// import { firebaseConfig } from '../firebase-config';
 
 
-const RegisterScreen = ({ navigation }) => {
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
 
-    const registrarUsuario = async () => {
-        try {
-            console.log("Registrando usuario...");
-            // Obtener la lista de usuarios almacenada
-            const users = await AsyncStorage.getItem("users");
-            console.log("users:", users);
-            const parsedUsers = users ? JSON.parse(users) : [];
-            console.log("parsedUsers:", parsedUsers);
+// function RegisterScreen(){
+//     const [email, setEmail] = useState('');
+//     const [password, setPassword] = useState('');
 
-            // Verificar si el usuario ya existe
-            const userExists = parsedUsers.find(user => user.username === username);
-            if (userExists) {
-                console.log("El nombre de usuario ya existe");
-                Alert.alert("El nombre de usuario ya existe");
-                return;
-            }
+//     const app = initializeApp(firebaseConfig);
+//     const auth = getAuth(app);
 
-            // Crear un nuevo usuario
-            const newUser = { username, password };
-            parsedUsers.push(newUser);
+//     const handleSingIn = () => {
+//         signInWithEmailAndPassword(auth, email, password)
+//             .then((userCredential) => {
+//                 const user = userCredential.user;
+//                 console.log('Usuario creado:', user);
+//             })
+//             .catch((error) => {
+//                 const errorCode = error.code;
+//                 const errorMessage = error.message;
+//                 Alert.alert('Error', errorMessage);
+//                 console.log('Error creando usuario:', errorCode, errorMessage);
+//             });
+//     };
 
-            // Guardar los usuarios actualizados en AsyncStorage
-            await AsyncStorage.setItem("users", JSON.stringify(parsedUsers));
-            console.log("Usuarios actualizados:", parsedUsers);
+//     return (
+//         <View style={styles.container}>
+//             <Text style={styles.title}>Registro de usuario</Text>
+//             <TextInput
+//                 style={styles.input}
+//                 placeholder="Nombre de usuario"
+//                 value={username}
+//                 onChangeText={(text) => setEmail(text)}
+//             />
+//             <TextInput
+//                 style={styles.input}
+//                 placeholder="Contraseña"
+//                 secureTextEntry
+//                 value={password}
+//                 onChangeText={(text) => setPassword(text)}
+//             />
+//             <Pressable style={styles.button} title="Registrarse" onPress={handleSingIn}>
+//                 <Text style={{ color: "white" }}>Registrarse</Text>
+//             </Pressable>
+//         </View>
+//     );
+// };
 
-            // Mostrar mensaje de éxito y redirigir a la pantalla de Login
-            console.log("Registro exitoso");
-            Alert.alert("Registro exitoso", "Ahora puedes iniciar sesión.");
-            navigation.navigate("Login");
-        } catch (error) {
-            console.error("Error al registrar el usuario:", error);
-            Alert.alert("Error al registrar el usuario", error.message);
-        }
+// const styles = StyleSheet.create({
+//     container: {
+//         flex: 1,
+//         justifyContent: "center",
+//         alignItems: "center",
+//     },
+//     title: {
+//         fontSize: 24,
+//         fontWeight: "bold",
+//         marginBottom: 20,
+//     },
+//     input: {
+//         width: "80%",
+//         height: 40,
+//         borderColor: "gray",
+//         borderWidth: 1,
+//         marginBottom: 20,
+//         paddingHorizontal: 10,
+//     },
+//     button: {
+//         width: "80%",
+//         height: 40,
+//         backgroundColor: "blue",
+//         justifyContent: "center",
+//         alignItems: "center",
+//         borderRadius: 5,
+//     },
+// });
+
+// export default RegisterScreen;
+import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+import React, { useState } from 'react';
+import { View, Text, TextInput, Alert, StyleSheet, Pressable } from 'react-native';
+import app from '../../firebase/firebase';
+
+function RegisterScreen({ navigation }) {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+
+    const auth = getAuth(app);
+
+    const handleRegister = () => {
+        createUserWithEmailAndPassword(auth, email, password)
+            .then(async (userCredential) => {
+                const user = userCredential.user;
+                await AsyncStorage.setItem('loggedUser', JSON.stringify(user));  // Guardar el usuario en AsyncStorage
+                navigation.replace("App");  // Redirigir a la app principal
+            })
+            .catch((error) => {
+                const errorMessage = error.message;
+                Alert.alert('Error', errorMessage);
+            });
     };
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Registro de usuario</Text>
-            <TextInput
-                style={styles.input}
-                placeholder="Nombre de usuario"
-                value={username}
-                onChangeText={setUsername}
-            />
-            <TextInput
-                style={styles.input}
-                placeholder="Contraseña"
-                secureTextEntry
-                value={password}
-                onChangeText={setPassword}
-            />
-            <Pressable style={styles.button} title="Registrarse" onPress={registrarUsuario}>
+            <Text>Email:</Text>
+            <TextInput style={styles.input} value={email} onChangeText={(text) => setEmail(text)} />
+            <Text>Password:</Text>
+            <TextInput style={styles.input} value={password} onChangeText={(text) => setPassword(text)} secureTextEntry={true} />
+            <Pressable style={styles.button} onPress={handleRegister}>
                 <Text style={{ color: "white" }}>Registrarse</Text>
             </Pressable>
         </View>
@@ -71,18 +125,13 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
     },
-    title: {
-        fontSize: 24,
-        fontWeight: "bold",
-        marginBottom: 20,
-    },
     input: {
         width: "80%",
         height: 40,
-        borderColor: "gray",
         borderWidth: 1,
         marginBottom: 20,
         paddingHorizontal: 10,
+        borderColor: "gray",
     },
     button: {
         width: "80%",
